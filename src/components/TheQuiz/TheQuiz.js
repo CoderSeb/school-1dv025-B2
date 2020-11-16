@@ -10,43 +10,82 @@ const template = document.createElement('template')
 
 template.innerHTML = `
 <style>
-  h1 {
-    text-align:center;
+  .titleHeader {
+    width:200px;
+    height:60px;
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform:translate(-50%);
   }
   .mainBoard {
-    background:grey;
-    height:85%;
+    background:green;
+    height:fit-content;
     width:95%;
     padding:1rem;
-    margin:1rem auto;
+    margin:7rem auto 1em auto;
     display:flex;
     flex-direction:row;
     gap:1rem;
     border-radius:10px;
+    box-shadow:0px 0px 5px 5px black;
   }
   .firstBox {
     width:70%;
+    opacity:0.7;
   }
 
   .secondBox {
     width:30%;
+    text-align:center;
+    background:blue;
+    color:white;
+    border-radius:10px;
+    opacity:0.8;
   }
 
-  .playerName {
+  .time {
+    margin-top:40%;
+    font-size:19em;
+  }
+
+  .timeHeader {
+    font-size:4em;
+  }
+
+
+  .playerNameInput {
+    font-size:1.2em;
+    outline:none;
+    border:none;
+    background:lightgreen;
+    position:absolute;
+    top:0px;
+    width: 250px;
+    height:50px;
+    padding:0.5em;
+    border-radius: 0 0 5px 0;
+  }
+
+  .playerNameHeader {
+    display:none;
     position:absolute;
     top: 10px;
     left:20px;
   }
 
 </style>
-<h2 class="playerName"></h2>
-<h1>The big quiz!</h1>
+<h1 class="titleHeader">The big quiz!</h1>
+<input type="text" class="playerNameInput" placeholder="Enter your nickname here!" />
+<h2 class="playerNameHeader"></h2>
+
 <div class="mainBoard">
   <div class="firstBox">
     <h1>firstBox</h1>
   </div>
   <div class="secondBox">
-  <h1>TIME</h1>
+  <h1 class="timeHeader">TIME</h1>
+  <h1 class="time">0</h1>
   </div>
 </div>
 `
@@ -57,13 +96,19 @@ class TheQuiz extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
-    this.playerName = this.promptPlayerName()
   }
 
-  promptPlayerName () {
-    if (!this.playerName) {
-      this.playerName = prompt('Please enter a username: ', 'Santa Claus')
-      this.shadowRoot.querySelector('.playerName').innerText = `${this.playerName} is playing!`
-    }
+  connectedCallback() {
+    this.shadowRoot.querySelector('.playerNameInput').addEventListener('keyup', event => {
+      this.getPlayerName(event)})
+  }
+
+  getPlayerName (event) {
+    this.shadowRoot.querySelector('.playerNameHeader').innerText = `${event.target.value} is playing!`
+    setTimeout(() => {
+      this.shadowRoot.querySelector('.playerNameHeader').style.display = 'inline-block'
+      this.shadowRoot.querySelector('.playerNameInput').style.display = 'none'
+    }, 5000)
+    
   }
 })
