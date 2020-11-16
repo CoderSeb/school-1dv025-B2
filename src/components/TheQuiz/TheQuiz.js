@@ -6,6 +6,7 @@
  */
 
 import '../TheTime/TheTime.js'
+import '../StartButton/StartButton.js'
 
 const template = document.createElement('template')
 
@@ -64,6 +65,7 @@ template.innerHTML = `
 <div class="mainBoard">
   <div class="firstBox">
     <h1>firstBox</h1>
+    <quiz-start-button></quiz-start-button>
   </div>
   <quiz-time></quiz-time>
 </div>
