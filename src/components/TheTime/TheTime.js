@@ -53,6 +53,7 @@ class TheTime extends HTMLElement {
       .shadowRoot.querySelector('quiz-time')
       .shadowRoot.querySelector('.time').innerText = initialTime
       initialTime -= 1
-    }, 1000) 
+    }, 1000)
   }
 })
+

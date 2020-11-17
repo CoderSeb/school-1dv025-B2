@@ -1,3 +1,5 @@
+import '../TheTime/TheTime.js'
+
 const template = document.createElement('template')
 template.innerHTML = `
 
@@ -34,34 +36,39 @@ class Question extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
-    this.qURL = 'http://courselab.lnu.se/question/1'
-    this.getQuestion = this.getQuestion.bind(this)
-    this.postAnswer = this.postAnswer.bind(this)
+    this._qURL = 'http://courselab.lnu.se/question/1'
+    this._getQuestion = this._getQuestion.bind(this)
+    this._postAnswer = this._postAnswer.bind(this)
+    this.alternativesList = this.shadowRoot.querySelector('#a-list')
   }
 
   connectedCallback() {
-    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', this.getQuestion)
-    this.shadowRoot.querySelector('#a-list').addEventListener('click', event => {
-      this.postAnswer(event)
+    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', this._getQuestion)
+    this.alternativesList.addEventListener('click', event => {
+      this._postAnswer(event)
     })
   }
 
-  async getQuestion() {
+  async _getQuestion() {
     this.shadowRoot.querySelector('#a-list').style.display = 'block'
     this.shadowRoot.querySelector('.ifCorrect').style.display = 'none'
-    await fetch(`${this.qURL}`)
+    await fetch(`${this._qURL}`)
       .then((response) => {
         return response.json()
       }).then((obj) => {
         this.shadowRoot.querySelector('.q-head').innerText = obj.question
-        console.log(obj)
+        this._qURL = obj.nextURL
+        if (obj.alternatives) {
+          const alternatives = Object.entries(obj.alternatives)
+          // Continue here!!
+        }
       }).catch((err) => {
         console.error(`Ops! Something went wrong..\n${err}`)
       })
     }
 
-  async postAnswer(answer) {
-    await fetch('http://courselab.lnu.se/answer/1', {
+  async _postAnswer(answer) {
+    await fetch(`${this._qURL}`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
@@ -73,8 +80,10 @@ class Question extends HTMLElement {
       console.log(obj)
       this.shadowRoot.querySelector('.ifCorrect').style.display = 'block'
       this.shadowRoot.querySelector('.ifCorrect').innerText = obj.message
-      this.qURL = obj.nextURL
-      this.getQuestion()
+      setTimeout(() => {
+        this._qURL = obj.nextURL
+        this._getQuestion()
+      }, 2000)
     }).catch((err) => {
       console.error(`Ops! Something went wrong with the post request...\n${err}`)
     })
