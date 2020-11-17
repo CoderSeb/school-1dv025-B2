@@ -1,3 +1,5 @@
+
+
 const template = document.createElement('template')
 
 template.innerHTML = `
@@ -11,6 +13,7 @@ template.innerHTML = `
     border:none;
     background:yellow;
     color:blue;
+    outline:none;
     box-shadow:0 0 5px 1px black;
     transition:all 0.2s ease;
   }
@@ -36,5 +39,21 @@ class StartButton extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
+  }
+
+  connectedCallback() {
+    this.addEventListener('click', () => {
+      this.gameStart()
+    })
+  }
+
+  gameStart() {
+    setTimeout(() => {
+      this.style.display = 'none'
+    }, 500)
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click')
   }
 })

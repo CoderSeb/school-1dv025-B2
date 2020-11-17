@@ -34,5 +34,25 @@ class TheTime extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
+    this._defaultTime = 20
+    this.countDownTimer = this.countDownTimer.bind(this)
+  }
+
+  connectedCallback() {
+    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', 
+    this.countDownTimer)
+  }
+
+  countDownTimer() {
+    let initialTime = this._defaultTime
+    const counter = setInterval(() => {
+      if (initialTime <= 0) {
+        clearInterval(counter)
+      }
+      document.querySelector('the-quiz-app')
+      .shadowRoot.querySelector('quiz-time')
+      .shadowRoot.querySelector('.time').innerText = initialTime
+      initialTime -= 1
+    }, 1000) 
   }
 })

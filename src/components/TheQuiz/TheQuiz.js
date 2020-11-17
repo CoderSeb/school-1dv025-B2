@@ -7,16 +7,18 @@
 
 import '../TheTime/TheTime.js'
 import '../StartButton/StartButton.js'
+import '../Questions/Questions.js'
 
 const template = document.createElement('template')
 
 template.innerHTML = `
 <style>
   .titleHeader {
-    width:200px;
+    width:300px;
     height:60px;
+    font-size: 3em;
     position:absolute;
-    top:10px;
+    top:0px;
     left:50%;
     transform:translate(-50%);
   }
@@ -54,7 +56,8 @@ template.innerHTML = `
     display:none;
     position:absolute;
     top: 10px;
-    left:20px;
+    left:50px;
+    font-size:2em;
   }
 
 </style>
@@ -64,7 +67,7 @@ template.innerHTML = `
 
 <div class="mainBoard">
   <div class="firstBox">
-    <h1>firstBox</h1>
+  <question-and-answers></question-and-answers>
     <quiz-start-button></quiz-start-button>
   </div>
   <quiz-time></quiz-time>
@@ -90,6 +93,5 @@ class TheQuiz extends HTMLElement {
       this.shadowRoot.querySelector('.playerNameHeader').style.display = 'inline-block'
       this.shadowRoot.querySelector('.playerNameInput').style.display = 'none'
     }, 5000)
-    
   }
 })
