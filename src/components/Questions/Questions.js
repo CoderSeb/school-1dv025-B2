@@ -114,9 +114,9 @@ class Question extends HTMLElement {
         this.shadowRoot.querySelector('.q-head').innerText = obj.question
         this._qURL = obj.nextURL
         if (obj.limit) {
-          document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time').setAttribute('timelimit', obj.limit)
+          document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time').shadowRoot.querySelector('.secondBox').setAttribute('timelimit', obj.limit)
         } else if (!obj.limit) {
-          document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time').setAttribute('timelimit', 20)
+          document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time').shadowRoot.querySelector('.secondBox').setAttribute('timelimit', 20)
         }
         this.shadowRoot.querySelector('.q-head').setAttribute('timelimit', this.timeLimit)
         if (obj.alternatives) {

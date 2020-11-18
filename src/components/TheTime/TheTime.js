@@ -34,14 +34,8 @@ class TheTime extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
-    this.timeLimit = this.timelimit
-    if (this.timelimit) {
-      console.log(this.timelimit)
-      this._defaultTime = this.timelimit
-    } else {
-      this._defaultTime = 20
-    }
     this._countDownTimer = this._countDownTimer.bind(this)
+    this._defaultTime = 20
   }
 
   connectedCallback() {
