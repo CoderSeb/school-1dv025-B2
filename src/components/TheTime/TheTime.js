@@ -34,20 +34,32 @@ class TheTime extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
-    this._defaultTime = 20
-    this.countDownTimer = this.countDownTimer.bind(this)
+    this.timeLimit = this.timelimit
+    if (this.timelimit) {
+      console.log(this.timelimit)
+      this._defaultTime = this.timelimit
+    } else {
+      this._defaultTime = 20
+    }
+    this._countDownTimer = this._countDownTimer.bind(this)
   }
 
   connectedCallback() {
     document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', 
-    this.countDownTimer)
+    this._countDownTimer)
   }
 
-  countDownTimer() {
+  disconnectedCallback() {
+    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').removeEventListener('click', 
+    this._countDownTimer)
+  }
+
+  _countDownTimer() {
     let initialTime = this._defaultTime
     const counter = setInterval(() => {
       if (initialTime <= 0) {
         clearInterval(counter)
+        alert('Sorry! Too slow!')
       }
       document.querySelector('the-quiz-app')
       .shadowRoot.querySelector('quiz-time')

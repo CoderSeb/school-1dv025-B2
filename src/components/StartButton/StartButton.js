@@ -47,15 +47,15 @@ class StartButton extends HTMLElement {
     })
   }
 
-  _gameStart() {
-    setTimeout(() => {
-      this.style.display = 'none'
-    }, 500)
-  }
-
   disconnectedCallback() {
     this.removeEventListener('click', () => {
       this._gameStart()
     })
+  }
+
+  _gameStart() {
+    setTimeout(() => {
+      this.style.display = 'none'
+    }, 500)
   }
 })

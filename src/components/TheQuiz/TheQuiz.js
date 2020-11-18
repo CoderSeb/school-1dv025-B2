@@ -84,10 +84,10 @@ class TheQuiz extends HTMLElement {
 
   connectedCallback() {
     this.shadowRoot.querySelector('.playerNameInput').addEventListener('keyup', event => {
-      this.getPlayerName(event)})
+      this._getPlayerName(event)})
   }
 
-  getPlayerName (event) {
+  _getPlayerName (event) {
     this.shadowRoot.querySelector('.playerNameHeader').innerText = `${event.target.value} is playing!`
     setTimeout(() => {
       this.shadowRoot.querySelector('.playerNameHeader').style.display = 'inline-block'
