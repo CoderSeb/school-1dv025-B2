@@ -44,7 +44,7 @@ template.innerHTML = `
 
 </style>
 <div class="q-div">
-  <h2 class="q-head"></h2>
+  <h2 class="q-head" timelimit="20"></h2>
 </div>
 <div class="a-div">
   <h1 class="ifCorrect"></h1>
@@ -67,6 +67,7 @@ class Question extends HTMLElement {
     this.alternativesList = this.shadowRoot.querySelector('#a-list')
     this.answerInput = this.shadowRoot.querySelector('.q-input')
     this.sendAnswerBtn = this.shadowRoot.querySelector('#inputSendBtn')
+    this.timeSlot = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
   }
 
   connectedCallback() {
@@ -114,11 +115,10 @@ class Question extends HTMLElement {
         this.shadowRoot.querySelector('.q-head').innerText = obj.question
         this._qURL = obj.nextURL
         if (obj.limit) {
-          document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time').shadowRoot.querySelector('.secondBox').setAttribute('timelimit', obj.limit)
+          this.timeSlot.setAttribute('timelimit', obj.limit)
         } else if (!obj.limit) {
-          document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time').shadowRoot.querySelector('.secondBox').setAttribute('timelimit', 20)
+          this.timeSlot.setAttribute('timelimit', 20)
         }
-        this.shadowRoot.querySelector('.q-head').setAttribute('timelimit', this.timeLimit)
         if (obj.alternatives) {
           this.alternativesList.style.display = 'block'
           const alternatives = obj.alternatives
@@ -151,7 +151,6 @@ class Question extends HTMLElement {
     }).then((response) => {
       return response.json()
     }).then((obj) => {
-      console.log(obj)
       this.shadowRoot.querySelector('.ifCorrect').style.display = 'block'
       this.shadowRoot.querySelector('.ifCorrect').innerText = obj.message
       setTimeout(() => {

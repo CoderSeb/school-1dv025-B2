@@ -34,32 +34,55 @@ class TheTime extends HTMLElement {
     super()
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
-    this._countDownTimer = this._countDownTimer.bind(this)
+    this._startCountDownTimer = this._startCountDownTimer.bind(this)
+    this.timeLimit = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
     this._defaultTime = 20
+    this.answerBtn = document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('#inputSendBtn')
+    this.answerList = document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('#a-list')
+    this.startedCounter = false
+    this.timer
   }
 
   connectedCallback() {
-    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', 
-    this._countDownTimer)
+    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click',
+    this._startCountDownTimer)
+    document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('.a-div').addEventListener('click', e => {
+      if (e.target === this.answerBtn || e.target === this.answerList) {
+        clearInterval(this.timer)
+        this._defaultTime = 30
+        this._startCountDownTimer()
+      }
+    })
+    if (!this.hasAttribute('timelimit')) {
+      this.setAttribute('timelimit', 20)
+    }
   }
 
   disconnectedCallback() {
     document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').removeEventListener('click', 
-    this._countDownTimer)
+    this._startCountDownTimer)
   }
 
-  _countDownTimer() {
-    let initialTime = this._defaultTime
-    const counter = setInterval(() => {
-      if (initialTime <= 0) {
-        clearInterval(counter)
-        alert('Sorry! Too slow!')
-      }
-      document.querySelector('the-quiz-app')
-      .shadowRoot.querySelector('quiz-time')
-      .shadowRoot.querySelector('.time').innerText = initialTime
-      initialTime -= 1
-    }, 1000)
+  static get observedAttributes() {
+    return ['timelimit']
   }
+
+  attributeChangedCallback(name) {
+    if (name === 'timelimit') {
+      this._defaultTime = this.timeLimit.getAttribute('timelimit')
+    }
+  }
+
+  _startCountDownTimer() {
+      let initialTime = this._defaultTime
+      this.timer = setInterval(() => {
+       if (initialTime <= 0) {
+         clearInterval(this.timer)
+         alert('Sorry! Too slow!')
+       }
+        this.shadowRoot.querySelector('.time').innerText = initialTime
+        initialTime -= 1
+     }, 1000)
+   }
 })
 
