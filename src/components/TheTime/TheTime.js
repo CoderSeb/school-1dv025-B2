@@ -35,10 +35,13 @@ class TheTime extends HTMLElement {
     this.attachShadow({mode: 'open'})
     .appendChild(template.content.cloneNode(true))
     this._startCountDownTimer = this._startCountDownTimer.bind(this)
-    this.timeLimit = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
+    this.timeLimit = document.querySelector('the-quiz-app').shadowRoot
+    .querySelector('quiz-time')
     this._defaultTime = 20
-    this.answerBtn = document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('#inputSendBtn')
-    this.answerList = document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('#a-list')
+    this.answerBtn = document.querySelector('the-quiz-app').shadowRoot
+    .querySelector('question-and-answers').shadowRoot.querySelector('#inputSendBtn')
+    this.answerList = document.querySelector('the-quiz-app').shadowRoot
+    .querySelector('question-and-answers').shadowRoot.querySelector('#a-list')
     this.startedCounter = false
     this.timer
   }
@@ -47,9 +50,8 @@ class TheTime extends HTMLElement {
     document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click',
     this._startCountDownTimer)
     document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('.a-div').addEventListener('click', e => {
-      if (e.target === this.answerBtn || e.target === this.answerList) {
+      if (e.target === this.answerBtn || e.target.className === 'answerListItem') {
         clearInterval(this.timer)
-        this._defaultTime = 30
         this._startCountDownTimer()
       }
     })

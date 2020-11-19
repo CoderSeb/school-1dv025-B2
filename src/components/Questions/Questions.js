@@ -128,6 +128,7 @@ class Question extends HTMLElement {
           for (let i = 0; i < keys.length; i++) {
             const alt = document.createElement('li')
             alt.id = keys[i]
+            alt.className = 'answerListItem'
             alt.innerText = values[i]
             this.alternativesList.appendChild(alt)
           }
