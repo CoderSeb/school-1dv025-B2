@@ -1,3 +1,4 @@
+
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
@@ -47,10 +48,11 @@ class TheTime extends HTMLElement {
   }
 
   connectedCallback() {
-    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click',
-    this._startCountDownTimer)
+    document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', () => {
+      this._startCountDownTimer()
+    })
     document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('.a-div').addEventListener('click', e => {
-      if (e.target === this.answerBtn || e.target.className === 'answerListItem') {
+      if (e.target === this.answerBtn) {
         clearInterval(this.timer)
         this._defaultTime = this.timeLimit.getAttribute('timelimit')
         this._startCountDownTimer()
