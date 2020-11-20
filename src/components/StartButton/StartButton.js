@@ -5,10 +5,14 @@ const template = document.createElement('template')
 template.innerHTML = `
 <style>
   .startButton {
-    width:400px;
+    width:50%;
+    min-width: 250px;
     height:100px;
     font-size:3em;
-    margin:15rem 30%;
+    margin-top:15rem;
+    margin-left: 50%;
+    transform:translate(-50%);
+    display:block;
     border-radius:10px;
     border:none;
     background:yellow;

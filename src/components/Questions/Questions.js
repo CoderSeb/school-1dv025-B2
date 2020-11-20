@@ -49,9 +49,8 @@ template.innerHTML = `
 <div class="a-div">
   <h1 class="ifCorrect"></h1>
   <input class="q-input" maxlength="15" type="text"/>
+  <div id="a-div"></div>
   <button id="inputSendBtn">Send answer</button>
-  <ul id="a-list">
-  </ul>
 </div>
 `
 
@@ -64,46 +63,48 @@ class Question extends HTMLElement {
     this._qURL = 'http://courselab.lnu.se/question/1'
     this._getQuestion = this._getQuestion.bind(this)
     this._postAnswer = this._postAnswer.bind(this)
-    this.alternativesList = this.shadowRoot.querySelector('#a-list')
+    this.alternativesDiv = this.shadowRoot.querySelector('#a-div')
+    this.alternativesList = this.shadowRoot.querySelectorAll('.radioAlts')
     this.answerInput = this.shadowRoot.querySelector('.q-input')
     this.sendAnswerBtn = this.shadowRoot.querySelector('#inputSendBtn')
     this.timeSlot = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
+    this._answerBtnClicked = this._answerBtnClicked.bind(this)
   }
 
   connectedCallback() {
     document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').addEventListener('click', this._getQuestion)
-    this.alternativesList.addEventListener('click', event => {
-      this._postAnswer(event.target)
-      this.alternativesList.style.display = 'none'
-    })
+
     this.answerInput.addEventListener('keyup', () => {
       this.answerInput.id = this.answerInput.value
     })
-    this.sendAnswerBtn.addEventListener('click', () => {
-      this._postAnswer(this.answerInput)
-      setTimeout(() => {
-        this.answerInput.style.display = 'none'
-        this.sendAnswerBtn.style.display = 'none'
-      }, 1000)
-    })
+
+    this.sendAnswerBtn.addEventListener('click', this._answerBtnClicked)
   }
 
-  disconnectedCallback() {
+  disconnectedCallback () {
     document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-start-button').removeEventListener('click', this._getQuestion)
-    this.alternativesList.removeEventListener('click', event => {
-      this._postAnswer(event.target)
-      this.alternativesList.style.display = 'none'
-    })
+
     this.answerInput.removeEventListener('keyup', () => {
       this.answerInput.id = this.answerInput.value
     })
-    this.sendAnswerBtn.removeEventListener('click', () => {
+
+    this.sendAnswerBtn.removeEventListener('click', this._answerBtnClicked)
+  }
+
+  _answerBtnClicked() {
+    if (this.alternativesDiv.children.length > 0) {
+      let alts = this.alternativesDiv.querySelectorAll('.radioAlts')
+      for (const alt of alts) {
+        if (alt.checked) {
+          this._postAnswer(alt)
+          this.alternativesDiv.innerHTML = ``
+          this.alternativesDiv.style.display = 'none'
+        }
+      }
+    } else {
       this._postAnswer(this.answerInput)
-      setTimeout(() => {
-        this.answerInput.style.display = 'none'
-        this.sendAnswerBtn.style.display = 'none'
-      }, 1000)
-    })
+      this.answerInput.style.display = 'none'
+    }
   }
 
   async _getQuestion() {
@@ -120,17 +121,24 @@ class Question extends HTMLElement {
           this.timeSlot.setAttribute('timelimit', 20)
         }
         if (obj.alternatives) {
-          this.alternativesList.style.display = 'block'
+          this.alternativesDiv.style.display = 'block'
+          this.sendAnswerBtn.style.display = 'block'
           const alternatives = obj.alternatives
-          this.alternativesList.innerHTML = ``
+          this.alternativesDiv.innerHTML = ``
           const values = Object.values(alternatives)
           const keys = Object.keys(alternatives)
           for (let i = 0; i < keys.length; i++) {
-            const alt = document.createElement('li')
-            alt.id = keys[i]
-            alt.className = 'answerListItem'
-            alt.innerText = values[i]
-            this.alternativesList.appendChild(alt)
+            const input = document.createElement('input')
+            const label = document.createElement('label')
+            input.id = keys[i]
+            input.className = 'radioAlts'
+            input.setAttribute('type', 'radio')
+            input.name = 'alts'
+            input.value = values[i]
+            label.setAttribute('for', values[i])
+            label.innerText = values[i]
+            this.alternativesDiv.appendChild(input)
+            this.alternativesDiv.appendChild(label)
           }
         } else {
           this.answerInput.style.display = 'block'
@@ -143,6 +151,7 @@ class Question extends HTMLElement {
     }
 
   async _postAnswer(answer) {
+    console.log(answer.id)
     await fetch(`${this._qURL}`, {
       method: 'post',
       headers: {

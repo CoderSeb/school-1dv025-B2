@@ -2,7 +2,7 @@ const template = document.createElement('template')
 template.innerHTML = `
 <style>
   .secondBox {
-    width:400px;
+    min-width:350px;
     height:95%;
     padding:1em;
     text-align:center;
@@ -52,12 +52,10 @@ class TheTime extends HTMLElement {
     document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('.a-div').addEventListener('click', e => {
       if (e.target === this.answerBtn || e.target.className === 'answerListItem') {
         clearInterval(this.timer)
+        this._defaultTime = this.timeLimit.getAttribute('timelimit')
         this._startCountDownTimer()
       }
     })
-    if (!this.hasAttribute('timelimit')) {
-      this.setAttribute('timelimit', 20)
-    }
   }
 
   disconnectedCallback() {

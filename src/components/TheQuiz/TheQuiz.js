@@ -60,6 +60,12 @@ template.innerHTML = `
     font-size:2em;
   }
 
+  @media only screen and (max-width:800px) {
+    .mainBoard {
+      flex-direction:column;
+    }
+  }
+
 </style>
 <h1 class="titleHeader">The big quiz!</h1>
 <input type="text" class="playerNameInput" placeholder="Enter your nickname here!" />
