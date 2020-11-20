@@ -1,4 +1,5 @@
 import '../TheTime/TheTime.js'
+import '../Highscore/Highscore.js'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -31,7 +32,9 @@ template.innerHTML = `
   #inputSendBtn {
     display:none;
     width:300px;
-    margin-top:1em;
+    position:absolute;
+    top:50%;
+    left:10%;
     font-size:1.2em;
     border:none;
     border-radius:5px;
@@ -42,8 +45,30 @@ template.innerHTML = `
     background:lightgreen;
   }
 
+  #a-div {
+    min-width:50%;
+    word-wrap: break-word;
+  }
+
+  #a-div > * {
+    font-size:1.5em;
+    margin-top:1em;
+  }
+
+  input[type=radio] {
+  transform:scale(2);
+  margin-right:1em;
+  margin-left:5%;
+}
+
+.scoreboard {
+  display:none;
+}
+
+
 </style>
 <div class="q-div">
+  <quiz-highscore class="scoreboard"></quiz-highscore>
   <h2 class="q-head" timelimit="20"></h2>
 </div>
 <div class="a-div">
@@ -130,6 +155,7 @@ class Question extends HTMLElement {
           for (let i = 0; i < keys.length; i++) {
             const input = document.createElement('input')
             const label = document.createElement('label')
+            const breakRow = document.createElement('br')
             input.id = keys[i]
             input.className = 'radioAlts'
             input.setAttribute('type', 'radio')
@@ -139,6 +165,7 @@ class Question extends HTMLElement {
             label.innerText = values[i]
             this.alternativesDiv.appendChild(input)
             this.alternativesDiv.appendChild(label)
+            this.alternativesDiv.appendChild(breakRow)
           }
         } else {
           this.answerInput.style.display = 'block'
@@ -161,12 +188,20 @@ class Question extends HTMLElement {
     }).then((response) => {
       return response.json()
     }).then((obj) => {
-      this.shadowRoot.querySelector('.ifCorrect').style.display = 'block'
-      this.shadowRoot.querySelector('.ifCorrect').innerText = obj.message
-      setTimeout(() => {
-        this._qURL = obj.nextURL
-        this._getQuestion()
-      }, 2000)
+      if(!obj.nextURL) {
+        this.shadowRoot.querySelector('.ifCorrect').style.display = 'block'
+        this.shadowRoot.querySelector('.ifCorrect').innerText = obj.message
+        setTimeout(() => {
+          this.shadowRoot.querySelector('.scoreboard').style.display = 'block'
+          this.shadowRoot.querySelector('.q-head').style.display = 'none'
+          this.shadowRoot.querySelector('.a-div').style.display = 'none'
+        }, 2000)
+      } else {
+        setTimeout(() => {
+          this._qURL = obj.nextURL
+          this._getQuestion()
+        }, 2000)
+      }
     }).catch((err) => {
       console.error(`Ops! Something went wrong with the post request...\n${err}`)
     })

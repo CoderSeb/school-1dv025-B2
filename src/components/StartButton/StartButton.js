@@ -60,6 +60,6 @@ class StartButton extends HTMLElement {
   _gameStart() {
     setTimeout(() => {
       this.style.display = 'none'
-    }, 500)
+    }, 100)
   }
 })
