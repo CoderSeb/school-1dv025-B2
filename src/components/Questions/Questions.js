@@ -45,6 +45,11 @@ template.innerHTML = `
     background:lightgreen;
   }
 
+  #inputSendBtn:active {
+    box-shadow:0px 0px 5px 2px black;
+  }
+
+
   #a-div {
     min-width:50%;
     word-wrap: break-word;
@@ -56,9 +61,10 @@ template.innerHTML = `
   }
 
   input[type=radio] {
-  transform:scale(2);
+  transform:scale(1.5);
   margin-right:1em;
   margin-left:5%;
+  background:red;
 }
 
 .scoreboard {
@@ -134,21 +140,22 @@ class Question extends HTMLElement {
 
   async _getQuestion() {
     this.shadowRoot.querySelector('.ifCorrect').style.display = 'none'
-    await fetch(`${this._qURL}`)
-      .then((response) => {
-        return response.json()
-      }).then((obj) => {
-        this.shadowRoot.querySelector('.q-head').innerText = obj.question
-        this._qURL = obj.nextURL
-        if (obj.limit) {
-          this.timeSlot.setAttribute('timelimit', obj.limit)
-        } else if (!obj.limit) {
+    const response = await fetch(`${this._qURL}`)
+    const result = await response.json()
+      .then((result) => {
+        this.shadowRoot.querySelector('.q-head').innerText = result.question
+        this._qURL = result.nextURL
+        console.log(result.limit)
+        if (result.limit) {
+          console.log(this.timeSlot)
+          this.timeSlot.setAttribute('timelimit', result.limit)
+        } else if (!result.limit) {
           this.timeSlot.setAttribute('timelimit', 20)
         }
-        if (obj.alternatives) {
+        if (result.alternatives) {
           this.alternativesDiv.style.display = 'block'
           this.sendAnswerBtn.style.display = 'block'
-          const alternatives = obj.alternatives
+          const alternatives = result.alternatives
           this.alternativesDiv.innerHTML = ``
           const values = Object.values(alternatives)
           const keys = Object.keys(alternatives)
@@ -197,10 +204,10 @@ class Question extends HTMLElement {
           this.shadowRoot.querySelector('.a-div').style.display = 'none'
         }, 2000)
       } else {
-        setTimeout(() => {
-          this._qURL = obj.nextURL
-          this._getQuestion()
-        }, 2000)
+        this.shadowRoot.querySelector('.ifCorrect').style.display = 'block'
+        this.shadowRoot.querySelector('.ifCorrect').innerText = obj.message
+        this._qURL = obj.nextURL
+        this._getQuestion()
       }
     }).catch((err) => {
       console.error(`Ops! Something went wrong with the post request...\n${err}`)

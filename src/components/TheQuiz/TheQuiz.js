@@ -14,7 +14,6 @@ const template = document.createElement('template')
 template.innerHTML = `
 <style>
   .titleHeader {
-    width:300px;
     height:60px;
     font-size: 3em;
     position:absolute;
