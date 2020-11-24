@@ -6,7 +6,7 @@
  */
 
 import '../TheTime/TheTime.js'
-import '../StartButton/StartButton.js'
+import '../MainButton/MainButton.js'
 import '../Questions/Questions.js'
 
 const template = document.createElement('template')
@@ -36,6 +36,10 @@ template.innerHTML = `
   .firstBox {
     width:70%;
     opacity:0.7;
+  }
+
+  .firstBox > h2, h4 {
+    text-align:center;
   }
 
   .playerNameInput {
@@ -72,8 +76,10 @@ template.innerHTML = `
 
 <div class="mainBoard">
   <div class="firstBox">
+  <h2>Enter a nickname at the top to start the quiz!</h2>
+  <h4><i>by doing so you agree to the use of local browser storage for storing your highscore.</i></h4>
   <question-and-answers></question-and-answers>
-    <quiz-start-button></quiz-start-button>
+    <quiz-main-button></quiz-main-button>
   </div>
   <quiz-time></quiz-time>
 </div>
@@ -88,15 +94,36 @@ class TheQuiz extends HTMLElement {
   }
 
   connectedCallback() {
+    this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+      .querySelector('.mainButton').style.display = 'none'
     this.shadowRoot.querySelector('.playerNameInput').addEventListener('keyup', event => {
+      this._getPlayerName(event)})
+  }
+  disconnectedCallback () {
+    this.shadowRoot.querySelector('.playerNameInput').removeEventListener('keyup', event => {
       this._getPlayerName(event)})
   }
 
   _getPlayerName (event) {
-    this.shadowRoot.querySelector('.playerNameHeader').innerText = `${event.target.value} is playing!`
+    this.shadowRoot.querySelector('.playerNameHeader')
+    .innerText = `${event.target.value} is playing!`
+    document.querySelector('the-quiz-app').shadowRoot
+    .querySelector('question-and-answers').shadowRoot
+    .querySelector('quiz-highscore')
+    .setAttribute('playername', event.target.value)
     setTimeout(() => {
-      this.shadowRoot.querySelector('.playerNameHeader').style.display = 'inline-block'
-      this.shadowRoot.querySelector('.playerNameInput').style.display = 'none'
+      this.shadowRoot.querySelector('.firstBox > h2').style.display = 'none'
+      this.shadowRoot.querySelector('.firstBox > h4').style.display = 'none'
+      this.shadowRoot.querySelector('.playerNameHeader')
+      .style.display = 'inline-block'
+      this.shadowRoot.querySelector('.playerNameInput')
+      .style.display = 'none'
+      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+      .querySelector('.mainButton').style.display = 'block'
+      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+      .querySelector('.mainButton').textContent = 'Start quiz!'
+      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+      .querySelector('.mainButton').id = 'gameStart'
     }, 5000)
   }
 })
