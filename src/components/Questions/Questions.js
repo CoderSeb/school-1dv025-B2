@@ -105,6 +105,10 @@ customElements.define('question-and-answers',
     }
 
     connectedCallback () {
+      this.mainBtn.addEventListener('click', () => {
+        this._getQuestion()
+      })
+
       this.answerInput.addEventListener('keyup', () => {
         this.answerInput.id = this.answerInput.value
       })
@@ -121,20 +125,6 @@ customElements.define('question-and-answers',
       })
 
       this.sendAnswerBtn.removeEventListener('click', this._answerBtnClicked)
-    }
-
-    static get observedAttributes() {
-      return ['gameMode']
-    }
-
-    attributeChangedCallback (name, oldValue, newValue) {
-      if (name === 'gameMode') {
-        console.log('should start')
-        if (newValue === 'start') {
-          
-          this._getQuestion()
-        }
-      }
     }
 
     _answerBtnClicked () {
@@ -154,6 +144,7 @@ customElements.define('question-and-answers',
     }
 
     async _getQuestion () {
+      if (this.mainBtn.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
       this.shadowRoot.querySelector('.ifCorrect').style.display = 'none'
       const response = await fetch(`${this._qURL}`)
       const result = await response.json()
@@ -195,6 +186,9 @@ customElements.define('question-and-answers',
         }).catch((err) => {
           console.error(`Ops! Something went wrong with the get request..\n${err}`)
         })
+      } else if (this.mainBtn.shadowRoot.querySelector('.mainButton').id === 'gameReset') {
+        window.location.reload()
+      }
     }
 
     async _postAnswer (answer) {

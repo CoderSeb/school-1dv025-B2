@@ -48,20 +48,18 @@ customElements.define('quiz-main-button',
     connectedCallback() {
       this.shadowRoot.querySelector('.mainButton').addEventListener('click', () => {
         if (this.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
-          document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').setAttribute('gameMode', 'start')
           this._gameStart()
         } else if (this.shadowRoot.querySelector('.mainButton').id === 'gameReset') {
-          document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').setAttribute('gameMode', 'stop')
           this._gameReset()
         }
       })
     }
 
     disconnectedCallback() {
-      this.removeEventListener('click', () => {
-        if (this.id === 'gameStart') {
+      this.shadowRoot.querySelector('.mainButton').removeEventListener('click', () => {
+        if (this.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
           this._gameStart()
-        } else if (this.id === 'gameReset') {
+        } else if (this.shadowRoot.querySelector('.mainButton').id === 'gameReset') {
           this._gameReset()
         }
       })

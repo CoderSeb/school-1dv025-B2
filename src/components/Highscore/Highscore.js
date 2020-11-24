@@ -54,7 +54,8 @@ customElements.define('quiz-highscore',
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').style.display = 'block'
           document.querySelector('the-quiz-app').shadowRoot
-            .querySelector('quiz-main-button').id = 'gameReset'
+            .querySelector('quiz-main-button').shadowRoot
+            .querySelector('.mainButton').id = 'gameReset'
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').textContent = 'Reset the game?'
@@ -67,7 +68,8 @@ customElements.define('quiz-highscore',
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').style.display = 'block'
           document.querySelector('the-quiz-app').shadowRoot
-            .querySelector('quiz-main-button').id = 'gameReset'
+            .querySelector('quiz-main-button').shadowRoot
+            .querySelector('.mainButton').id = 'gameReset'
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').textContent = 'Reset the game?'
