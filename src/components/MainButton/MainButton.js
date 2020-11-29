@@ -68,13 +68,10 @@ customElements.define('quiz-main-button',
     }
 
     _gameStart() {
-      setTimeout(() => {
         this.shadowRoot.querySelector('.mainButton').style.display = 'none'
-      }, 100)
     }
 
     _gameReset() {
-      console.log('game about to reset')
       setTimeout(() => {
         this.shadowRoot.querySelector('.mainButton').style.display = 'none'
         document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').style.display = 'unset'

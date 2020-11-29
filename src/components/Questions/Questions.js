@@ -32,9 +32,7 @@ template.innerHTML = `
   #inputSendBtn {
     display:none;
     width:300px;
-    position:absolute;
-    top:50%;
-    left:10%;
+    margin: 2rem auto;
     font-size:1.2em;
     border:none;
     border-radius:5px;
@@ -163,6 +161,8 @@ customElements.define('question-and-answers',
       const response = await fetch(`${this._qURL}`)
       const result = await response.json()
         .then((result) => {
+          this.shadowRoot.querySelector('.q-head').style.display = 'block'
+          this.shadowRoot.querySelector('.a-div').style.display = 'block'
           this.shadowRoot.querySelector('.q-head').innerText = result.question
           this._qURL = result.nextURL
           if (result.limit) {
@@ -221,6 +221,15 @@ customElements.define('question-and-answers',
           this.shadowRoot.querySelector('.q-head').style.display = 'none'
           this.shadowRoot.querySelector('.a-div').style.display = 'none'
           this.timeSlot.setAttribute('timesup', 'true')
+        } else if (response.status === 400) {
+          this.shadowRoot.querySelector('.scoreboard').style.display = 'block'
+          this.shadowRoot.querySelector('.q-head').style.display = 'none'
+          this.shadowRoot.querySelector('.a-div').style.display = 'none'
+          this.timeSlot.setAttribute('timesup', 'true')
+          document.querySelector('the-quiz-app').shadowRoot
+            .querySelector('question-and-answers').shadowRoot
+            .querySelector('quiz-highscore')
+            .setAttribute('gamestopped', 'true')
         } else {
           return response.json()
         }
@@ -238,7 +247,7 @@ customElements.define('question-and-answers',
             this.shadowRoot.querySelector('.scoreboard').style.display = 'block'
             this.shadowRoot.querySelector('.q-head').style.display = 'none'
             this.shadowRoot.querySelector('.a-div').style.display = 'none'
-          }, 2000)
+          }, 1000)
         } else {
           this.shadowRoot.querySelector('.ifCorrect').style.display = 'block'
           this.shadowRoot.querySelector('.ifCorrect').innerText = obj.message

@@ -94,12 +94,14 @@ customElements.define('quiz-highscore',
     renderScoreBoard () {
       let players = this.scoreStorage.getItem('players')
       players = JSON.parse(players)
-      players.sort((a, b) => a.pScore - b.pScore)
-      for (let i = 0; i < players.length; i++) {
-        if (i < 5) {
-          const listItem = document.createElement('li')
-          listItem.textContent = `${players[i].pName} -- ${players[i].pScore}`
-          this.highscoreList.appendChild(listItem)
+      if (players !== null) {
+        players.sort((a, b) => a.pScore - b.pScore)
+        for (let i = 0; i < players.length; i++) {
+          if (i < 5) {
+            const listItem = document.createElement('li')
+            listItem.textContent = `${players[i].pName} -- ${players[i].pScore}`
+            this.highscoreList.appendChild(listItem)
+          }
         }
       }
     }
