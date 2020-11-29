@@ -127,6 +127,20 @@ customElements.define('question-and-answers',
       this.sendAnswerBtn.removeEventListener('click', this._answerBtnClicked)
     }
 
+    static get observedAttributes () {
+      return ['gamereset']
+    }
+
+    attributeChangedCallback (name, oldValue, newValue) {
+      if (name === 'gamereset') {
+        this._qURL = this.originalURL
+      }
+    }
+
+
+
+
+
     _answerBtnClicked () {
       if (this.alternativesDiv.children.length > 0) {
         const alts = this.alternativesDiv.querySelectorAll('.radioAlts')
@@ -186,8 +200,6 @@ customElements.define('question-and-answers',
         }).catch((err) => {
           console.error(`Ops! Something went wrong with the get request..\n${err}`)
         })
-      } else if (this.mainBtn.shadowRoot.querySelector('.mainButton').id === 'gameReset') {
-        window.location.reload()
       }
     }
 
@@ -221,6 +233,7 @@ customElements.define('question-and-answers',
             .querySelector('question-and-answers').shadowRoot
             .querySelector('quiz-highscore')
             .setAttribute('gamestopped', 'true')
+          this.sendAnswerBtn.style.display = 'none'
           setTimeout(() => {
             this.shadowRoot.querySelector('.scoreboard').style.display = 'block'
             this.shadowRoot.querySelector('.q-head').style.display = 'none'

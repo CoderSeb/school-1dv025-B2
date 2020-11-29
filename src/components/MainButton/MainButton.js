@@ -43,6 +43,8 @@ customElements.define('quiz-main-button',
       super()
       this.attachShadow({mode: 'open'})
         .appendChild(template.content.cloneNode(true))
+        this._gameReset = this._gameReset.bind(this)
+        this._gameStart = this._gameStart.bind(this)
     }
 
     connectedCallback() {
@@ -75,6 +77,12 @@ customElements.define('quiz-main-button',
       console.log('game about to reset')
       setTimeout(() => {
         this.shadowRoot.querySelector('.mainButton').style.display = 'none'
+        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').style.display = 'unset'
+        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').value = ''
+        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameHeader').innerText = ''
+        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameHeader').style.display = 'none'
+        document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('.scoreboard').style.display = 'none'
+        document.querySelector('the-quiz-app').setAttribute('gameReset', 'true')
       }, 100)
     }
   })

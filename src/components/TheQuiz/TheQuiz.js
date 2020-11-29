@@ -104,6 +104,22 @@ class TheQuiz extends HTMLElement {
       this._getPlayerName(event)})
   }
 
+  static get observedAttributes () {
+    return ['gamereset']
+  }
+
+  attributeChangedCallback (name, oldValue, newValue) {
+    if (name === 'gamereset') {
+      if (newValue === 'true') {
+        this.shadowRoot.querySelector('.firstBox > h2').style.display = 'block'
+        this.shadowRoot.querySelector('.firstBox > h4').style.display = 'block'
+        this.shadowRoot.querySelector('question-and-answers').setAttribute('gamereset', 'true')
+      }
+    }
+  }
+
+
+
   _getPlayerName (event) {
     this.shadowRoot.querySelector('.playerNameHeader')
     .innerText = `${event.target.value} is playing!`
