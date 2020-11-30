@@ -77,9 +77,11 @@ template.innerHTML = `
 </div>
 <div class="a-div">
   <h1 class="ifCorrect"></h1>
-  <input class="q-input" maxlength="15" type="text"/>
+  <form>
+  <input tabindex=1 class="q-input" maxlength="15" type="text"/>
   <div id="a-div"></div>
   <button id="inputSendBtn">Send answer</button>
+  </form>
 </div>
 `
 
@@ -111,7 +113,10 @@ customElements.define('question-and-answers',
         this.answerInput.id = this.answerInput.value
       })
 
-      this.sendAnswerBtn.addEventListener('click', this._answerBtnClicked)
+      this.sendAnswerBtn.addEventListener('click', e => {
+        e.preventDefault()
+        this._answerBtnClicked()
+      })
     }
 
     disconnectedCallback () {
@@ -131,13 +136,11 @@ customElements.define('question-and-answers',
 
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'gamereset') {
-        this._qURL = this.originalURL
+        if (newValue === 'true') {
+          this._qURL = this.originalURL
+        }
       }
     }
-
-
-
-
 
     _answerBtnClicked () {
       if (this.alternativesDiv.children.length > 0) {
@@ -145,7 +148,7 @@ customElements.define('question-and-answers',
         for (const alt of alts) {
           if (alt.checked) {
             this._postAnswer(alt)
-            this.alternativesDiv.innerHTML = ``
+            this.alternativesDiv.innerHTML = ''
             this.alternativesDiv.style.display = 'none'
           }
         }
@@ -157,49 +160,50 @@ customElements.define('question-and-answers',
 
     async _getQuestion () {
       if (this.mainBtn.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
-      this.shadowRoot.querySelector('.ifCorrect').style.display = 'none'
-      const response = await fetch(`${this._qURL}`)
-      const result = await response.json()
-        .then((result) => {
-          this.shadowRoot.querySelector('.q-head').style.display = 'block'
-          this.shadowRoot.querySelector('.a-div').style.display = 'block'
-          this.shadowRoot.querySelector('.q-head').innerText = result.question
-          this._qURL = result.nextURL
-          if (result.limit) {
-            this.timeSlot.setAttribute('timelimit', result.limit)
-          } else if (!result.limit) {
-            this.timeSlot.setAttribute('timelimit', 20)
-          }
-          if (result.alternatives) {
-            this.alternativesDiv.style.display = 'block'
-            this.sendAnswerBtn.style.display = 'block'
-            const alternatives = result.alternatives
-            this.alternativesDiv.innerHTML = ``
-            const values = Object.values(alternatives)
-            const keys = Object.keys(alternatives)
-            for (let i = 0; i < keys.length; i++) {
-              const input = document.createElement('input')
-              const label = document.createElement('label')
-              const breakRow = document.createElement('br')
-              input.id = keys[i]
-              input.className = 'radioAlts'
-              input.setAttribute('type', 'radio')
-              input.name = 'alts'
-              input.value = values[i]
-              label.setAttribute('for', values[i])
-              label.innerText = values[i]
-              this.alternativesDiv.appendChild(input)
-              this.alternativesDiv.appendChild(label)
-              this.alternativesDiv.appendChild(breakRow)
+        this.shadowRoot.querySelector('.ifCorrect').style.display = 'none'
+        const response = await fetch(`${this._qURL}`)
+        const result = await response.json()
+          .then((result) => {
+            this.shadowRoot.querySelector('.q-head').style.display = 'block'
+            this.shadowRoot.querySelector('.a-div').style.display = 'block'
+            this.shadowRoot.querySelector('.q-head').innerText = result.question
+            this._qURL = result.nextURL
+            if (result.limit) {
+              this.timeSlot.setAttribute('timelimit', result.limit)
+            } else if (!result.limit) {
+              this.timeSlot.setAttribute('timelimit', 20)
             }
-          } else {
-            this.answerInput.style.display = 'block'
-            this.answerInput.value = ''
-            this.sendAnswerBtn.style.display = 'block'
-          }
-        }).catch((err) => {
-          console.error(`Ops! Something went wrong with the get request..\n${err}`)
-        })
+            if (result.alternatives) {
+              this.alternativesDiv.style.display = 'block'
+              this.sendAnswerBtn.style.display = 'block'
+              const alternatives = result.alternatives
+              this.alternativesDiv.innerHTML = ''
+              const values = Object.values(alternatives)
+              const keys = Object.keys(alternatives)
+              for (let i = 0; i < keys.length; i++) {
+                const input = document.createElement('input')
+                const label = document.createElement('label')
+                const breakRow = document.createElement('br')
+                input.id = keys[i]
+                input.className = 'radioAlts'
+                input.setAttribute('type', 'radio')
+                input.tabindex = i + 1
+                input.name = 'alts'
+                input.value = values[i]
+                label.setAttribute('for', values[i])
+                label.innerText = values[i]
+                this.alternativesDiv.appendChild(input)
+                this.alternativesDiv.appendChild(label)
+                this.alternativesDiv.appendChild(breakRow)
+              }
+            } else {
+              this.answerInput.style.display = 'block'
+              this.answerInput.value = ''
+              this.sendAnswerBtn.style.display = 'block'
+            }
+          }).catch((err) => {
+            console.error(`Ops! Something went wrong with the get request..\n${err}`)
+          })
       }
     }
 
@@ -210,7 +214,7 @@ customElements.define('question-and-answers',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({answer: answer.id})
+        body: JSON.stringify({ answer: answer.id })
       }).then((response) => {
         if (response.status === 500) {
           document.querySelector('the-quiz-app').shadowRoot

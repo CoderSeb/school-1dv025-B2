@@ -1,3 +1,13 @@
+/**
+ * The quiz-highscore web component module.
+ *
+ * @author Sebastian Åkerblom <sa224ny@student.lnu.se>
+ * @version 1.0.0
+ */
+
+/**
+ * Define template.
+ */
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
@@ -16,16 +26,34 @@ template.innerHTML = `
     </div>
   </div>
 `
+
+/**
+ * Define custom element.
+ */
 customElements.define('quiz-highscore',
   class Highscore extends HTMLElement {
+    /**
+     * Creates an instance of the current type.
+     */
     constructor () {
       super()
+
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
+
+      // Get the player nickname input, define score 
       this.playerName = document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').value
+
+      // Get the local storage.
       this.scoreStorage = window.localStorage
+
+      // Bind methods
       this.addToStorage = this.addToStorage.bind(this)
       this.renderScoreBoard = this.renderScoreBoard.bind(this)
+
+
       this.totalScore = 0
       this.playerSavedName = ''
       this.highscoreList = this.shadowRoot.querySelector('.highscoreList')
@@ -41,7 +69,7 @@ customElements.define('quiz-highscore',
       } else if (name === 'score') {
         if (isNaN(newValue)) {
           newValue = 0
-          this.totalScore += Number(newValue)
+          this.totalScore += newValue
         } else {
           this.totalScore += Number(newValue)
         }
@@ -59,6 +87,7 @@ customElements.define('quiz-highscore',
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').textContent = 'Reset the game?'
+          this.totalScore = 0
         }
       }
       if (name === 'gamestopped') {
@@ -73,6 +102,7 @@ customElements.define('quiz-highscore',
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').textContent = 'Reset the game?'
+          this.totalScore = 0
         }
       }
     }
@@ -92,10 +122,13 @@ customElements.define('quiz-highscore',
     }
 
     renderScoreBoard () {
+      this.setAttribute('gamefinished', 'false')
+      this.setAttribute('gamstopped', 'false')
       let players = this.scoreStorage.getItem('players')
       players = JSON.parse(players)
       if (players !== null) {
         players.sort((a, b) => a.pScore - b.pScore)
+        this.highscoreList.innerHTML = ''
         for (let i = 0; i < players.length; i++) {
           if (i < 5) {
             const listItem = document.createElement('li')

@@ -85,61 +85,62 @@ template.innerHTML = `
 </div>
 `
 
-customElements.define('the-quiz-app', 
-class TheQuiz extends HTMLElement {
-  constructor() {
-    super()
-    this.attachShadow({mode: 'open'})
-    .appendChild(template.content.cloneNode(true))
-  }
+customElements.define('the-quiz-app',
+  class TheQuiz extends HTMLElement {
+    constructor () {
+      super()
+      this.attachShadow({ mode: 'open' })
+        .appendChild(template.content.cloneNode(true))
+    }
 
-  connectedCallback() {
-    this.shadowRoot.querySelector('quiz-main-button').shadowRoot
-      .querySelector('.mainButton').style.display = 'none'
-    this.shadowRoot.querySelector('.playerNameInput').addEventListener('keyup', event => {
-      this._getPlayerName(event)})
-  }
-  disconnectedCallback () {
-    this.shadowRoot.querySelector('.playerNameInput').removeEventListener('keyup', event => {
-      this._getPlayerName(event)})
-  }
+    connectedCallback () {
+      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+        .querySelector('.mainButton').style.display = 'none'
+      this.shadowRoot.querySelector('.playerNameInput').addEventListener('keyup', event => {
+        this._getPlayerName(event)
+      })
+    }
 
-  static get observedAttributes () {
-    return ['gamereset']
-  }
+    disconnectedCallback () {
+      this.shadowRoot.querySelector('.playerNameInput').removeEventListener('keyup', event => {
+        this._getPlayerName(event)
+      })
+    }
 
-  attributeChangedCallback (name, oldValue, newValue) {
-    if (name === 'gamereset') {
-      if (newValue === 'true') {
-        this.shadowRoot.querySelector('.firstBox > h2').style.display = 'block'
-        this.shadowRoot.querySelector('.firstBox > h4').style.display = 'block'
-        this.shadowRoot.querySelector('question-and-answers').setAttribute('gamereset', 'true')
+    static get observedAttributes () {
+      return ['gamereset']
+    }
+
+    attributeChangedCallback (name, oldValue, newValue) {
+      if (name === 'gamereset') {
+        if (newValue === 'true') {
+          this.shadowRoot.querySelector('.firstBox > h2').style.display = 'block'
+          this.shadowRoot.querySelector('.firstBox > h4').style.display = 'block'
+          this.shadowRoot.querySelector('question-and-answers').setAttribute('gamereset', 'true')
+        }
       }
     }
-  }
 
-
-
-  _getPlayerName (event) {
-    this.shadowRoot.querySelector('.playerNameHeader')
-    .innerText = `${event.target.value} is playing!`
-    document.querySelector('the-quiz-app').shadowRoot
-    .querySelector('question-and-answers').shadowRoot
-    .querySelector('quiz-highscore')
-    .setAttribute('playername', event.target.value)
-    setTimeout(() => {
-      this.shadowRoot.querySelector('.firstBox > h2').style.display = 'none'
-      this.shadowRoot.querySelector('.firstBox > h4').style.display = 'none'
+    _getPlayerName (event) {
       this.shadowRoot.querySelector('.playerNameHeader')
-      .style.display = 'inline-block'
-      this.shadowRoot.querySelector('.playerNameInput')
-      .style.display = 'none'
-      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
-      .querySelector('.mainButton').style.display = 'block'
-      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
-      .querySelector('.mainButton').textContent = 'Start quiz!'
-      this.shadowRoot.querySelector('quiz-main-button').shadowRoot
-      .querySelector('.mainButton').id = 'gameStart'
-    }, 5000)
-  }
-})
+        .innerText = `${event.target.value} is playing!`
+      document.querySelector('the-quiz-app').shadowRoot
+        .querySelector('question-and-answers').shadowRoot
+        .querySelector('quiz-highscore')
+        .setAttribute('playername', event.target.value)
+      setTimeout(() => {
+        this.shadowRoot.querySelector('.firstBox > h2').style.display = 'none'
+        this.shadowRoot.querySelector('.firstBox > h4').style.display = 'none'
+        this.shadowRoot.querySelector('.playerNameHeader')
+          .style.display = 'inline-block'
+        this.shadowRoot.querySelector('.playerNameInput')
+          .style.display = 'none'
+        this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+          .querySelector('.mainButton').style.display = 'block'
+        this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+          .querySelector('.mainButton').textContent = 'Start quiz!'
+        this.shadowRoot.querySelector('quiz-main-button').shadowRoot
+          .querySelector('.mainButton').id = 'gameStart'
+      }, 5000)
+    }
+  })

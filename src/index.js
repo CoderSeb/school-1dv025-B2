@@ -7,4 +7,3 @@
 
 // Imports
 import './components/TheQuiz/TheQuiz.js'
-

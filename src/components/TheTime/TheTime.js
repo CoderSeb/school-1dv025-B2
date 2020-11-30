@@ -31,61 +31,60 @@ template.innerHTML = `
 `
 
 customElements.define('quiz-time',
-class TheTime extends HTMLElement {
-  constructor() {
-    super()
-    this.attachShadow({mode: 'open'})
-      .appendChild(template.content.cloneNode(true))
-    this._startCountDownTimer = this._startCountDownTimer.bind(this)
+  class TheTime extends HTMLElement {
+    constructor () {
+      super()
+      this.attachShadow({ mode: 'open' })
+        .appendChild(template.content.cloneNode(true))
+      this._startCountDownTimer = this._startCountDownTimer.bind(this)
       this.timeLimit = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
-    this._defaultTime
-    this.answerBtn = document.querySelector('the-quiz-app').shadowRoot
-      .querySelector('question-and-answers').shadowRoot.querySelector('#inputSendBtn')
-    this.answerList = document.querySelector('the-quiz-app').shadowRoot
-      .querySelector('question-and-answers').shadowRoot.querySelector('#a-list')
-    this.startedCounter = false
-    this.timeLeft = this.shadowRoot.querySelector('.time')
-    this.scoreCounter
-    this.scoreBoard = document.querySelector('the-quiz-app').shadowRoot
-      .querySelector('question-and-answers').shadowRoot.querySelector('quiz-highscore')
-  }
-
-  connectedCallback() {
-    // Called when created
-  }
-
-  disconnectedCallback() {
-    // Called when removed
-  }
-
-  static get observedAttributes() {
-    return ['timelimit', 'timesup']
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'timelimit') {
-      this._defaultTime = newValue
-      clearInterval(this.timer)
-      this._startCountDownTimer()
+      this._defaultTime
+      this.answerBtn = document.querySelector('the-quiz-app').shadowRoot
+        .querySelector('question-and-answers').shadowRoot.querySelector('#inputSendBtn')
+      this.answerList = document.querySelector('the-quiz-app').shadowRoot
+        .querySelector('question-and-answers').shadowRoot.querySelector('#a-list')
+      this.startedCounter = false
+      this.timeLeft = this.shadowRoot.querySelector('.time')
+      this.scoreCounter
+      this.scoreBoard = document.querySelector('the-quiz-app').shadowRoot
+        .querySelector('question-and-answers').shadowRoot.querySelector('quiz-highscore')
     }
-    if (name === 'timesup') {
-      if (newValue === 'true') {
+
+    connectedCallback () {
+    // Called when created
+    }
+
+    disconnectedCallback () {
+    // Called when removed
+    }
+
+    static get observedAttributes () {
+      return ['timelimit', 'timesup']
+    }
+
+    attributeChangedCallback (name, oldValue, newValue) {
+      if (name === 'timelimit') {
+        this._defaultTime = newValue
         clearInterval(this.timer)
+        this._startCountDownTimer()
+      }
+      if (name === 'timesup') {
+        if (newValue === 'true') {
+          clearInterval(this.timer)
+        }
       }
     }
-  }
 
-  _startCountDownTimer() {
+    _startCountDownTimer () {
       let initialTime = this._defaultTime
       this.timer = setInterval(() => {
-       if (initialTime <= 0) {
-         clearInterval(this.timer)
-       }
+        if (initialTime <= 0) {
+          clearInterval(this.timer)
+        }
         this.timeLeft.innerText = initialTime
         this.scoreCounter = this._defaultTime - this.timeLeft.innerText
         initialTime -= 1
-     }, 1000)
-     this.scoreBoard.setAttribute('score', this.scoreCounter)
-   }
-})
-
+      }, 1000)
+      this.scoreBoard.setAttribute('score', this.scoreCounter)
+    }
+  })
