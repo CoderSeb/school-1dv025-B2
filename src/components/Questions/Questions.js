@@ -1,6 +1,17 @@
+/**
+ * The question-and-answers web component module.
+ *
+ * @author Sebastian Åkerblom <sa224ny@student.lnu.se>
+ * @version 1.0.0
+ */
+
+// Imports
 import '../TheTime/TheTime.js'
 import '../Highscore/Highscore.js'
 
+/**
+ * Define template.
+ */
 const template = document.createElement('template')
 template.innerHTML = `
 
@@ -85,25 +96,50 @@ template.innerHTML = `
 </div>
 `
 
+/**
+ * Define custom element.
+ */
 customElements.define('question-and-answers',
   class Question extends HTMLElement {
+    /**
+     * Creates an instance of the current type.
+     */
     constructor () {
       super()
+
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
+
+      // Saves the url in qURL as the current url and
+      // originalURL as the original url.
       this._qURL = 'http://courselab.lnu.se/question/1'
       this.originalURL = 'http://courselab.lnu.se/question/1'
+
+      // Binding methods.
       this._getQuestion = this._getQuestion.bind(this)
       this._postAnswer = this._postAnswer.bind(this)
+      this._answerBtnClicked = this._answerBtnClicked.bind(this)
+
+      // Get the answer div, list, input, button.
       this.alternativesDiv = this.shadowRoot.querySelector('#a-div')
       this.alternativesList = this.shadowRoot.querySelectorAll('.radioAlts')
       this.answerInput = this.shadowRoot.querySelector('.q-input')
       this.sendAnswerBtn = this.shadowRoot.querySelector('#inputSendBtn')
-      this.timeSlot = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
-      this._answerBtnClicked = this._answerBtnClicked.bind(this)
-      this.mainBtn = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-main-button')
+
+      // Get the time for the custom time element.
+      this.timeSlot = document.querySelector('the-quiz-app').shadowRoot
+        .querySelector('quiz-time')
+
+      // Get the custom main button.
+      this.mainBtn = document.querySelector('the-quiz-app').shadowRoot
+        .querySelector('quiz-main-button')
     }
 
+    /**
+     * Called when the element is created.
+     */
     connectedCallback () {
       this.mainBtn.addEventListener('click', () => {
         this._getQuestion()
@@ -119,21 +155,40 @@ customElements.define('question-and-answers',
       })
     }
 
+    /**
+     * Called when the element is removed.
+     */
     disconnectedCallback () {
-      document.querySelector('the-quiz-app').shadowRoot
-        .querySelector('quiz-start-button').removeEventListener('click', this._getQuestion)
+      this.mainBtn.removeEventListener('click', () => {
+        this._getQuestion()
+      })
 
       this.answerInput.removeEventListener('keyup', () => {
         this.answerInput.id = this.answerInput.value
       })
 
-      this.sendAnswerBtn.removeEventListener('click', this._answerBtnClicked)
+      this.sendAnswerBtn.removeEventListener('click', e => {
+        e.preventDefault()
+        this._answerBtnClicked()
+      })
     }
 
+    /**
+     * Attribute(s) to monitor for changes.
+     *
+     * @returns {string[]} A string array of attribute(s) to monitor.
+     */
     static get observedAttributes () {
       return ['gamereset']
     }
 
+    /**
+     * Called when observed attribute(s) changes.
+     *
+     * @param {string} name - The attribute name.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'gamereset') {
         if (newValue === 'true') {
@@ -142,6 +197,10 @@ customElements.define('question-and-answers',
       }
     }
 
+    /**
+     * To be used when the answer button has been clicked.
+     * Calls the postAnswer method with the player answer.
+     */
     _answerBtnClicked () {
       if (this.alternativesDiv.children.length > 0) {
         const alts = this.alternativesDiv.querySelectorAll('.radioAlts')
@@ -158,11 +217,15 @@ customElements.define('question-and-answers',
       }
     }
 
+    /**
+     * Sends a GET request to the qURL and gets the question and
+     * time limit from the response.
+     */
     async _getQuestion () {
       if (this.mainBtn.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
         this.shadowRoot.querySelector('.ifCorrect').style.display = 'none'
         const response = await fetch(`${this._qURL}`)
-        const result = await response.json()
+        await response.json()
           .then((result) => {
             this.shadowRoot.querySelector('.q-head').style.display = 'block'
             this.shadowRoot.querySelector('.a-div').style.display = 'block'
@@ -207,8 +270,13 @@ customElements.define('question-and-answers',
       }
     }
 
+    /**
+     * Takes an answer and makes a post request with the answer and
+     * if the response has a url the getQuestion will be called again.
+     *
+     * @param {object} answer - The answer to make a POST request with.
+     */
     async _postAnswer (answer) {
-      console.log(answer.id)
       await fetch(`${this._qURL}`, {
         method: 'post',
         headers: {

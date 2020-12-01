@@ -1,6 +1,14 @@
+/**
+ * The quiz-main-button web component module.
+ *
+ * @author Sebastian Åkerblom <sa224ny@student.lnu.se>
+ * @version 1.0.0
+ */
 
+/**
+ * Define template.
+ */
 const template = document.createElement('template')
-
 template.innerHTML = `
 <style>
   .mainButton {
@@ -38,16 +46,29 @@ template.innerHTML = `
 <button class="mainButton" id="gameStart" type="submit">Ready!</button>
 `
 
+/**
+ * Define custom element.
+ */
 customElements.define('quiz-main-button',
   class MainButton extends HTMLElement {
+    /**
+     * Creates an instance of the current type.
+     */
     constructor () {
       super()
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
+
+      // Binds methods.
       this._gameReset = this._gameReset.bind(this)
       this._gameStart = this._gameStart.bind(this)
     }
 
+    /**
+     * Called when the element is created.
+     */
     connectedCallback () {
       this.shadowRoot.querySelector('.mainButton').addEventListener('click', () => {
         if (this.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
@@ -58,6 +79,9 @@ customElements.define('quiz-main-button',
       })
     }
 
+    /**
+     * Called when the element is deleted.
+     */
     disconnectedCallback () {
       this.shadowRoot.querySelector('.mainButton').removeEventListener('click', () => {
         if (this.shadowRoot.querySelector('.mainButton').id === 'gameStart') {
@@ -68,19 +92,33 @@ customElements.define('quiz-main-button',
       })
     }
 
+    /**
+     * Removes the start button and resets the gamereset attribute on main
+     * component to false.
+     */
     _gameStart () {
       document.querySelector('the-quiz-app').setAttribute('gamereset', 'false')
       this.shadowRoot.querySelector('.mainButton').style.display = 'none'
     }
 
+    /**
+     * Removes reset button, scoreboard and player name header aswell as sets
+     * the gamereset attribute on main component to true.
+     */
     _gameReset () {
       setTimeout(() => {
         this.shadowRoot.querySelector('.mainButton').style.display = 'none'
-        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').style.display = 'unset'
-        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').value = ''
-        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameHeader').innerText = ''
-        document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameHeader').style.display = 'none'
-        document.querySelector('the-quiz-app').shadowRoot.querySelector('question-and-answers').shadowRoot.querySelector('.scoreboard').style.display = 'none'
+        document.querySelector('the-quiz-app').shadowRoot
+          .querySelector('.playerNameInput').style.display = 'unset'
+        document.querySelector('the-quiz-app').shadowRoot
+          .querySelector('.playerNameInput').value = ''
+        document.querySelector('the-quiz-app').shadowRoot
+          .querySelector('.playerNameHeader').innerText = ''
+        document.querySelector('the-quiz-app').shadowRoot
+          .querySelector('.playerNameHeader').style.display = 'none'
+        document.querySelector('the-quiz-app').shadowRoot
+          .querySelector('question-and-answers').shadowRoot
+          .querySelector('.scoreboard').style.display = 'none'
         document.querySelector('the-quiz-app').setAttribute('gamereset', 'true')
       }, 100)
     }

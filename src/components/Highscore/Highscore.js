@@ -37,32 +37,43 @@ customElements.define('quiz-highscore',
      */
     constructor () {
       super()
-
       // Attach a shadow DOM tree to this element and
       // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
 
-      // Get the player nickname input, define score 
+      // Get the player nickname input and highscore div.
       this.playerName = document.querySelector('the-quiz-app').shadowRoot.querySelector('.playerNameInput').value
+      this.highscoreList = this.shadowRoot.querySelector('.highscoreList')
+
+      // Creating score and player name variable.
+      this.totalScore = 0
+      this.playerSavedName = ''
 
       // Get the local storage.
       this.scoreStorage = window.localStorage
 
-      // Bind methods
-      this.addToStorage = this.addToStorage.bind(this)
-      this.renderScoreBoard = this.renderScoreBoard.bind(this)
-
-
-      this.totalScore = 0
-      this.playerSavedName = ''
-      this.highscoreList = this.shadowRoot.querySelector('.highscoreList')
+      // Binds methods.
+      this._addToStorage = this._addToStorage.bind(this)
+      this._renderScoreBoard = this._renderScoreBoard.bind(this)
     }
 
+    /**
+     * Attributes to monitor for change.
+     *
+     * @returns {string[]} A string array of attributes to monitor.
+     */
     static get observedAttributes () {
       return ['playername', 'score', 'gamefinished', 'gamestopped']
     }
 
+    /**
+     * Called when observed attribute(s) changes.
+     *
+     * @param {string} name - The attribute's name.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'playername') {
         this.playerSavedName = newValue
@@ -76,8 +87,8 @@ customElements.define('quiz-highscore',
       }
       if (name === 'gamefinished') {
         if (newValue === 'true') {
-          this.addToStorage(this.playerSavedName, this.totalScore)
-          this.renderScoreBoard()
+          this._addToStorage(this.playerSavedName, this.totalScore)
+          this._renderScoreBoard()
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').style.display = 'block'
@@ -92,7 +103,7 @@ customElements.define('quiz-highscore',
       }
       if (name === 'gamestopped') {
         if (newValue === 'true') {
-          this.renderScoreBoard()
+          this._renderScoreBoard()
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('quiz-main-button').shadowRoot
             .querySelector('.mainButton').style.display = 'block'
@@ -107,7 +118,13 @@ customElements.define('quiz-highscore',
       }
     }
 
-    addToStorage (name, score) {
+    /**
+     * Takes name and score and add them to the local storage.
+     *
+     * @param {string} name - The player name.
+     * @param {number} score - The player score.
+     */
+    _addToStorage (name, score) {
       const player = {
         pName: name,
         pScore: score
@@ -121,7 +138,10 @@ customElements.define('quiz-highscore',
       this.scoreStorage.setItem('players', JSON.stringify(players))
     }
 
-    renderScoreBoard () {
+    /**
+     * Sorts the list of players in local storage and prints the top 5 to the scoreboard.
+     */
+    _renderScoreBoard () {
       this.setAttribute('gamefinished', 'false')
       this.setAttribute('gamstopped', 'false')
       let players = this.scoreStorage.getItem('players')

@@ -5,12 +5,15 @@
  * @version 1.0.0
  */
 
+// Imports
 import '../TheTime/TheTime.js'
 import '../MainButton/MainButton.js'
 import '../Questions/Questions.js'
 
+/**
+ * Define a template.
+ */
 const template = document.createElement('template')
-
 template.innerHTML = `
 <style>
   .titleHeader {
@@ -85,42 +88,78 @@ template.innerHTML = `
 </div>
 `
 
+/**
+ * Define custom element.
+ */
 customElements.define('the-quiz-app',
   class TheQuiz extends HTMLElement {
+    /**
+     * Creates an instance of the current type.
+     */
     constructor () {
       super()
+
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
     }
 
+    /**
+     * Called when the element is created.
+     */
     connectedCallback () {
       this.shadowRoot.querySelector('quiz-main-button').shadowRoot
         .querySelector('.mainButton').style.display = 'none'
-      this.shadowRoot.querySelector('.playerNameInput').addEventListener('keyup', event => {
-        this._getPlayerName(event)
-      })
+      this.shadowRoot.querySelector('.playerNameInput')
+        .addEventListener('keyup', event => {
+          this._getPlayerName(event)
+        })
     }
 
+    /**
+     * Called when the element is removed.
+     */
     disconnectedCallback () {
-      this.shadowRoot.querySelector('.playerNameInput').removeEventListener('keyup', event => {
-        this._getPlayerName(event)
-      })
+      this.shadowRoot.querySelector('.playerNameInput')
+        .removeEventListener('keyup', event => {
+          this._getPlayerName(event)
+        })
     }
 
+    /**
+     * Attribute(s) to monitor for changes.
+     *
+     * @returns {string[]} A string array for attribute(s) to monitor.
+     */
     static get observedAttributes () {
       return ['gamereset']
     }
 
+    /**
+     * Called when observed attribute(s) changes.
+     *
+     * @param {string} name - The name of the attribute.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'gamereset') {
         if (newValue === 'true') {
           this.shadowRoot.querySelector('.firstBox > h2').style.display = 'block'
           this.shadowRoot.querySelector('.firstBox > h4').style.display = 'block'
-          this.shadowRoot.querySelector('question-and-answers').setAttribute('gamereset', 'true')
+          this.shadowRoot.querySelector('question-and-answers')
+            .setAttribute('gamereset', 'true')
         }
       }
     }
 
+    /**
+     * Gets the player name from the event and after a certain time (5s) the
+     * name will show and the quiz start button will show.
+     *
+     * @param {object} event The input element which holds the player name.
+     */
     _getPlayerName (event) {
       this.shadowRoot.querySelector('.playerNameHeader')
         .innerText = `${event.target.value} is playing!`

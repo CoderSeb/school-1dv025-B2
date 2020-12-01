@@ -1,4 +1,13 @@
+/**
+ * The time component.
+ *
+ * @author Sebastian Åkerblom <sa224ny@student.lnu.se>
+ * @version 1.0.0
+ */
 
+/**
+ * Define a template.
+ */
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
@@ -30,24 +39,36 @@ template.innerHTML = `
 </div>
 `
 
+/**
+ * Define a custom element.
+ */
 customElements.define('quiz-time',
   class TheTime extends HTMLElement {
+    /**
+     * Creates an instance of the current type.
+     */
     constructor () {
       super()
+
+      // Attach a shadow DOM tree to this element and
+      // append the template to the shadow root.
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
+
+      // Binds the method.
       this._startCountDownTimer = this._startCountDownTimer.bind(this)
-      this.timeLimit = document.querySelector('the-quiz-app').shadowRoot.querySelector('quiz-time')
-      this._defaultTime
-      this.answerBtn = document.querySelector('the-quiz-app').shadowRoot
-        .querySelector('question-and-answers').shadowRoot.querySelector('#inputSendBtn')
-      this.answerList = document.querySelector('the-quiz-app').shadowRoot
-        .querySelector('question-and-answers').shadowRoot.querySelector('#a-list')
-      this.startedCounter = false
-      this.timeLeft = this.shadowRoot.querySelector('.time')
-      this.scoreCounter
+
+      // Get the highscore component
       this.scoreBoard = document.querySelector('the-quiz-app').shadowRoot
         .querySelector('question-and-answers').shadowRoot.querySelector('quiz-highscore')
+
+      // Get the time header where the time is displayed.
+      this.timeLeft = this.shadowRoot.querySelector('.time')
+
+      // Defining variables.
+      this.startedCounter = false
+      this._defaultTime = null
+      this.scoreCounter = null
     }
 
     connectedCallback () {
@@ -58,10 +79,22 @@ customElements.define('quiz-time',
     // Called when removed
     }
 
+    /**
+     * Attributes to be observed.
+     *
+     * @returns {string[]} A string array with the attributes to monitor.
+     */
     static get observedAttributes () {
       return ['timelimit', 'timesup']
     }
 
+    /**
+     * Called when the observed attribute(s) changes.
+     *
+     * @param {string} name - The attribute name.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'timelimit') {
         this._defaultTime = newValue
@@ -75,6 +108,11 @@ customElements.define('quiz-time',
       }
     }
 
+    /**
+     * The timer method which counts down from the default time and
+     * sets the score attribute on the highscore component based
+     * on seconds passed on the counter.
+     */
     _startCountDownTimer () {
       let initialTime = this._defaultTime
       this.timer = setInterval(() => {
