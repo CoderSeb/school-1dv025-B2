@@ -80,7 +80,6 @@ customElements.define('quiz-highscore',
       } else if (name === 'score') {
         if (isNaN(newValue)) {
           newValue = 0
-          this.totalScore += newValue
         } else {
           this.totalScore += Number(newValue)
         }
@@ -143,7 +142,7 @@ customElements.define('quiz-highscore',
      */
     _renderScoreBoard () {
       this.setAttribute('gamefinished', 'false')
-      this.setAttribute('gamstopped', 'false')
+      this.setAttribute('gamestopped', 'false')
       let players = this.scoreStorage.getItem('players')
       players = JSON.parse(players)
       if (players !== null) {

@@ -284,16 +284,7 @@ customElements.define('question-and-answers',
         },
         body: JSON.stringify({ answer: answer.id })
       }).then((response) => {
-        if (response.status === 500) {
-          document.querySelector('the-quiz-app').shadowRoot
-            .querySelector('question-and-answers').shadowRoot
-            .querySelector('quiz-highscore')
-            .setAttribute('gamefinished', 'true')
-          this.shadowRoot.querySelector('.scoreboard').style.display = 'block'
-          this.shadowRoot.querySelector('.q-head').style.display = 'none'
-          this.shadowRoot.querySelector('.a-div').style.display = 'none'
-          this.timeSlot.setAttribute('timesup', 'true')
-        } else if (response.status === 400) {
+        if (response.status === 400) {
           this.shadowRoot.querySelector('.scoreboard').style.display = 'block'
           this.shadowRoot.querySelector('.q-head').style.display = 'none'
           this.shadowRoot.querySelector('.a-div').style.display = 'none'
@@ -313,7 +304,7 @@ customElements.define('question-and-answers',
           document.querySelector('the-quiz-app').shadowRoot
             .querySelector('question-and-answers').shadowRoot
             .querySelector('quiz-highscore')
-            .setAttribute('gamestopped', 'true')
+            .setAttribute('gamefinished', 'true')
           this.sendAnswerBtn.style.display = 'none'
           setTimeout(() => {
             this.shadowRoot.querySelector('.scoreboard').style.display = 'block'

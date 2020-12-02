@@ -117,6 +117,20 @@ customElements.define('quiz-time',
       let initialTime = this._defaultTime
       this.timer = setInterval(() => {
         if (initialTime <= 0) {
+          document.querySelector('the-quiz-app').shadowRoot
+            .querySelector('question-and-answers').shadowRoot
+            .querySelector('quiz-highscore')
+            .setAttribute('gamestopped', 'true')
+          this.setAttribute('timesup', 'true')
+          document.querySelector('the-quiz-app')
+            .shadowRoot.querySelector('question-and-answers')
+            .shadowRoot.querySelector('.scoreboard').style.display = 'block'
+          document.querySelector('the-quiz-app')
+            .shadowRoot.querySelector('question-and-answers')
+            .shadowRoot.querySelector('.q-head').style.display = 'none'
+          document.querySelector('the-quiz-app')
+            .shadowRoot.querySelector('question-and-answers')
+            .shadowRoot.querySelector('.a-div').style.display = 'none'
           clearInterval(this.timer)
         }
         this.timeLeft.innerText = initialTime
